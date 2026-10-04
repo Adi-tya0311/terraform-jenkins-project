@@ -79,7 +79,7 @@ flowchart LR
 
 <div align="center">
 
-<img src="https://skillicons.dev/icons?i=terraform,jenkins,aws,docker,nginx,github,linux,bash,html,css,js&perline=11" />
+<img src="https://skillicons.dev/icons?i=terraform,jenkins,aws,docker,nginx,github,linux,bash,html&perline=11" />
 
 </div>
 
@@ -157,10 +157,6 @@ Instead of learning DevOps tools one by one, I wired them into **one real workfl
 to understand exactly what happens between `git push` and *"it's live."*
 
 <br/>
-
-**Built by [Adi-tya0311](https://github.com/Adi-tya0311)**
-
-⭐ If you found this useful, drop a star!
 
 <img src="https://capsule-render.vercel.app/api?type=waving&color=0:D24939,50:FF9900,100:7B42BC&height=120&section=footer" width="100%"/>
 
