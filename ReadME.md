@@ -105,18 +105,6 @@ terraform destroy   # 💣 tear it all down
 | `8080` | 🛠️ Jenkins |
 | `9000` | 🔍 SonarQube |
 
----
-
-## 🐳 Run It Locally
-
-```bash
-docker build -t devops-portfolio .
-docker run -d --name devops-app -p 80:80 devops-portfolio
-```
-
-Then open **http://localhost** 🎉
-
----
 
 ## 📁 Project Structure
 
@@ -130,24 +118,6 @@ terraform-jenkins-project/
 ├── sonar-project.properties   # SonarQube config
 └── index.html                 # The app
 ```
-
----
-
-## 🔐 Security
-
-Secrets like the **SonarQube token** and **AWS credentials** live in **Jenkins Credentials Manager**. They are never committed to the repo.
-
----
-
-## 🗺️ Roadmap
-
-- [ ] 🔒 HTTPS with SSL/TLS + custom domain
-- [ ] 🏷️ Docker image versioning + ECR lifecycle policies
-- [ ] 📈 Prometheus + Grafana monitoring
-- [ ] 🔁 Blue/green or rolling deployments
-- [ ] ☸️ Kubernetes deployment
-
----
 
 <div align="center">
 
