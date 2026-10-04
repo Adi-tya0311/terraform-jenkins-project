@@ -67,6 +67,34 @@ pipeline {
             }
         }
 
+        stage('Verify ECR Image') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'aws-creds',
+                    usernameVariable: 'AWS_ACCESS_KEY_ID',
+                    passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+                )]) {
+                    sh '''
+                        IMAGE_DIGEST=$(aws ecr describe-images \
+                        --repository-name devops-portfolio \
+                        --image-ids imageTag=latest \
+                        --region ap-south-1 \
+                        --query 'imageDetails[0].imageDigest' \
+                        --output text)
+
+                        echo "ECR Image Digest: $IMAGE_DIGEST"
+
+                        if [ -z "$IMAGE_DIGEST" ] || [ "$IMAGE_DIGEST" = "None" ]; then
+                            echo "ERROR: Image was not found in ECR!"
+                            exit 1
+                        fi
+
+                        echo "ECR image verification successful."
+                    '''
+                }
+            }
+        }
+
         stage('Deploy') {
             steps {
                 withCredentials([usernamePassword(
