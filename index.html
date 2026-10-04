@@ -1,12 +1,148 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevOps Portfolio</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reel Picks – Find your next movie</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+    --plum:#1d1430; --plum-2:#2a1d45; --velvet:#8e2a3f; --gold:#f2b84b;
+    --ivory:#f3ecdf; --mist:#b9acd0; --line:rgba(243,236,223,.14);
+    --display:'Fraunces',Georgia,'Times New Roman',serif;
+    --body:'DM Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--plum);color:var(--ivory);font-family:var(--body);line-height:1.55;min-height:100vh}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+
+/* Marquee hero */
+.hero{position:relative;padding:56px 20px 64px;text-align:center;
+    background:radial-gradient(ellipse at 50% 0%,var(--plum-2),var(--plum) 70%)}
+.marquee{max-width:880px;margin:0 auto;padding:44px 28px 40px;border:3px solid var(--gold);border-radius:14px;position:relative;
+    background:linear-gradient(180deg,var(--velvet),#5c1a2b);box-shadow:0 0 60px rgba(242,184,75,.18)}
+.marquee::before,.marquee::after{content:"";position:absolute;left:14px;right:14px;height:8px;
+    background:radial-gradient(circle,var(--gold) 3px,transparent 3.5px) 0 0/22px 8px repeat-x}
+.marquee::before{top:10px}.marquee::after{bottom:10px}
+.marquee h1{font-family:var(--display);font-weight:800;font-size:clamp(2.6rem,8vw,5.2rem);line-height:1;letter-spacing:-.02em}
+.marquee p{margin:14px auto 0;max-width:46ch;color:#f1d9d9;font-size:1.05rem}
+.pick{margin-top:26px;background:var(--gold);color:#2a1700;border:0;border-radius:999px;padding:14px 28px;
+    font:700 1rem var(--body);cursor:pointer;transition:transform .15s,box-shadow .15s}
+.pick:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.35)}
+
+/* Controls */
+.controls{max-width:1100px;margin:36px auto 8px;padding:0 20px;display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:transparent;color:var(--ivory);border:1px solid var(--line);border-radius:999px;padding:8px 16px;font:500 .9rem var(--body);cursor:pointer;transition:background .15s,color .15s}
+.chip:hover{border-color:var(--gold)}
+.chip[aria-pressed="true"]{background:var(--ivory);color:var(--plum);border-color:var(--ivory)}
+.search{background:var(--plum-2);border:1px solid var(--line);color:var(--ivory);border-radius:10px;padding:10px 14px;font:400 .95rem var(--body);width:240px;max-width:100%}
+.search::placeholder{color:var(--mist)}
+
+/* Grid */
+.grid{max-width:1100px;margin:20px auto 70px;padding:0 20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:26px}
+.card{background:var(--plum-2);border-radius:16px;overflow:hidden;border:1px solid var(--line);display:flex;flex-direction:column}
+.card.spot{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold),0 12px 40px rgba(242,184,75,.25)}
+.poster{aspect-ratio:2/3;display:flex;flex-direction:column;justify-content:flex-end;padding:18px;position:relative}
+.poster b{font-family:var(--display);font-weight:800;font-size:1.65rem;line-height:1.05;text-shadow:0 2px 12px rgba(0,0,0,.45)}
+.poster span{font-size:.85rem;opacity:.9;margin-top:6px}
+.rate{position:absolute;top:14px;right:14px;background:rgba(0,0,0,.45);backdrop-filter:blur(4px);border-radius:999px;padding:4px 11px;font-weight:700;font-size:.85rem;color:var(--gold)}
+.info{padding:16px 18px 20px}
+.info p{color:var(--mist);font-size:.92rem}
+.tags{margin-top:10px;font-size:.8rem;color:var(--gold);font-weight:500}
+.empty{grid-column:1/-1;text-align:center;color:var(--mist);padding:50px 0}
+
+footer{border-top:1px solid var(--line);text-align:center;padding:26px 20px;color:var(--mist);font-size:.85rem}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+@media (max-width:560px){.search{width:100%}.marquee{padding:40px 18px 36px}}
+</style>
 </head>
 <body>
-    <h1>DevOps Portfolio</h1>
-    <p>Deployed using Jenkins, Docker, AWS, Terraform and Git.</p>
+
+<header class="hero">
+    <div class="marquee">
+    <h1>Reel Picks</h1>
+    <p>Pick a mood, skip the scrolling. Twelve films worth your next evening.</p>
+    <button class="pick" id="pick">Surprise me</button>
+    </div>
+</header>
+
+<section class="controls" aria-label="Filters">
+    <div class="chips" id="chips"></div>
+    <input class="search" id="search" type="search" placeholder="Search titles" aria-label="Search titles">
+</section>
+
+<main class="grid" id="grid" aria-live="polite"></main>
+
+<footer>Reel Picks · build v1.0.0 · ratings are approximate</footer>
+
+<script>
+const movies = [
+    {t:"Inception",y:2010,g:["Sci-Fi","Thriller"],r:8.8,d:"A thief who steals secrets from dreams is offered one last, impossible job.",c:["#2b5876","#4e4376"]},
+    {t:"Parasite",y:2019,g:["Thriller","Drama"],r:8.5,d:"A poor family slowly works its way into a wealthy household's life.",c:["#0f2027","#2c7a5b"]},
+    {t:"Spirited Away",y:2001,g:["Animation","Fantasy"],r:8.6,d:"A girl wanders into a spirit world and must work to free her parents.",c:["#c06c84","#355c7d"]},
+    {t:"The Dark Knight",y:2008,g:["Action","Thriller"],r:9.0,d:"Batman faces the Joker, an enemy who wants Gotham to break itself.",c:["#232526","#5b5f66"]},
+    {t:"Interstellar",y:2014,g:["Sci-Fi","Drama"],r:8.7,d:"Astronauts travel through a wormhole to find humanity a new home.",c:["#141e30","#b4693a"]},
+    {t:"3 Idiots",y:2009,g:["Comedy","Drama"],r:8.4,d:"Three engineering students question what college and success really mean.",c:["#e8a33d","#b5452f"]},
+    {t:"Whiplash",y:2014,g:["Drama","Music"],r:8.5,d:"A young drummer is pushed to his limit by a ruthless conservatory teacher.",c:["#3a1c1c","#b8742a"]},
+    {t:"Coco",y:2017,g:["Animation","Fantasy","Music"],r:8.4,d:"A boy who dreams of music crosses into the Land of the Dead.",c:["#f09819","#7b2d8e"]},
+    {t:"Mad Max: Fury Road",y:2015,g:["Action"],r:8.1,d:"A desert chase where every vehicle is a weapon and every second counts.",c:["#c2410c","#3b2314"]},
+    {t:"The Grand Budapest Hotel",y:2014,g:["Comedy","Drama"],r:8.1,d:"A hotel concierge and his lobby boy get tangled in a stolen-painting caper.",c:["#e5a5b8","#8e3b5e"]},
+    {t:"Dangal",y:2016,g:["Drama","Sports"],r:8.3,d:"A former wrestler trains his daughters to compete at the highest level.",c:["#a85a20","#3b4a2f"]},
+    {t:"Arrival",y:2016,g:["Sci-Fi","Drama"],r:7.9,d:"A linguist is called in to learn why twelve alien ships have landed.",c:["#434343","#7a8a96"]}
+];
+
+const genres = ["All", ...new Set(movies.flatMap(m => m.g))].sort((a,b)=> a==="All" ? -1 : b==="All" ? 1 : a.localeCompare(b));
+let genre = "All", query = "", spot = null;
+
+const chips = document.getElementById("chips");
+const grid  = document.getElementById("grid");
+
+genres.forEach(g => {
+  const b = document.createElement("button");
+  b.className = "chip"; b.textContent = g;
+  b.setAttribute("aria-pressed", g === genre);
+  b.onclick = () => { genre = g; spot = null; chips.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", c === b)); render(); };
+  chips.appendChild(b);
+});
+
+document.getElementById("search").addEventListener("input", e => { query = e.target.value.trim().toLowerCase(); spot = null; render(); });
+
+function visible(){
+  return movies.filter(m => (genre === "All" || m.g.includes(genre)) && m.t.toLowerCase().includes(query));
+}
+
+function render(){
+  const list = visible();
+  grid.innerHTML = list.length ? "" : '<p class="empty">No films match. Try a different mood or clear the search.</p>';
+  list.forEach(m => {
+    const el = document.createElement("article");
+    el.className = "card" + (m.t === spot ? " spot" : "");
+    el.innerHTML =
+      `<div class="poster" style="background:linear-gradient(160deg,${m.c[0]},${m.c[1]})">
+         <div class="rate">★ ${m.r}</div><b></b><span>${m.y}</span></div>
+       <div class="info"><p></p><div class="tags">${m.g.join(", ")}</div></div>`;
+    el.querySelector("b").textContent = m.t;
+    el.querySelector(".info p").textContent = m.d;
+    grid.appendChild(el);
+  });
+}
+
+document.getElementById("pick").onclick = () => {
+  genre = "All"; query = ""; document.getElementById("search").value = "";
+  chips.querySelectorAll(".chip").forEach((c,i) => c.setAttribute("aria-pressed", i === 0));
+  spot = movies[Math.floor(Math.random() * movies.length)].t;
+  render();
+  const el = grid.querySelector(".spot");
+  if (el) el.scrollIntoView({behavior:"smooth", block:"center"});
+};
+
+render();
+</script>
 </body>
 </html>
