@@ -66,5 +66,31 @@ pipeline {
                 '''
             }
         }
+
+        stage('Deploy') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'aws-creds',
+                    usernameVariable: 'AWS_ACCESS_KEY_ID',
+                    passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+                )]) {
+                    sh '''
+                        aws ecr get-login-password --region ap-south-1 |
+                        docker login --username AWS --password-stdin \
+                        667747482015.dkr.ecr.ap-south-1.amazonaws.com
+
+                        docker pull \
+                        667747482015.dkr.ecr.ap-south-1.amazonaws.com/devops-portfolio:latest
+
+                        docker rm -f devops-app || true
+
+                        docker run -d \
+                        --name devops-app \
+                        -p 80:80 \
+                        667747482015.dkr.ecr.ap-south-1.amazonaws.com/devops-portfolio:latest
+                    '''
+                }
+            }
+        }
     }
 }
